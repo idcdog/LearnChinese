@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import SearchResultCard from "@/components/SearchResultCard";
 import VocabularyBook from "@/components/VocabularyBook";
+import PWAInstall from "@/components/PWAInstall";
+import DataManager from "@/components/DataManager";
+import ReviewSystem from "@/components/ReviewSystem";
+import SaveIndicator, { useSaveIndicator } from "@/components/SaveIndicator";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { useLocalStorageState } from "@/hooks/useLocalStorage";
 import {
   recommendedList,
@@ -16,6 +21,7 @@ export default function HomePage() {
   const [results, setResults] = useState<CharacterRecord[]>([]);
   const [history, setHistory] = useLocalStorageState<string[]>("search-history", []);
   const [book, setBook] = useLocalStorageState<string[]>("vocabulary-book", []);
+  const { lastSaved, triggerSave } = useSaveIndicator();
 
   const handleSearch = (value?: string) => {
     const keyword = (value ?? query).trim();
@@ -27,6 +33,7 @@ export default function HomePage() {
     setResults(found);
     setHistory((prev) => {
       const next = [keyword, ...prev.filter((item) => item !== keyword)].slice(0, 8);
+      triggerSave();
       return next;
     });
   };
@@ -34,27 +41,45 @@ export default function HomePage() {
   const addToBook = (char: string) => {
     setBook((prev) => {
       if (prev.includes(char)) return prev;
+      triggerSave();
       return [char, ...prev].slice(0, 30);
     });
   };
 
+  const handleDataImport = (data: { vocabularyBook: string[]; searchHistory: string[] }) => {
+    setBook(data.vocabularyBook);
+    setHistory(data.searchHistory);
+    triggerSave();
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-cyan-50">
-      <header className="border-b border-slate-200 bg-white/70 backdrop-blur">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 eye-care:from-green-50 eye-care:via-green-50/50 eye-care:to-green-100">
+      <PWAInstall />
+      <SaveIndicator lastSaved={lastSaved} />
+
+      <header className="relative z-50 border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-700 dark:bg-slate-800/70 eye-care:border-green-300 eye-care:bg-green-50/70">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-          <Link href="/" className="text-lg font-semibold text-slate-900">
+          <Link href="/" className="text-lg font-semibold text-slate-900 dark:text-slate-100 eye-care:text-green-900">
             汉字学习工具站
           </Link>
-          <div className="hidden gap-4 text-sm text-slate-600 sm:flex">
-            <a href="#search" className="hover:text-slate-900">
-              汉字查询
-            </a>
-            <a href="#recommend" className="hover:text-slate-900">
-              每日推荐
-            </a>
-            <a href="#vocabulary" className="hover:text-slate-900">
-              生词本
-            </a>
+          <div className="flex items-center gap-3">
+            <div className="hidden gap-4 text-sm text-slate-600 dark:text-slate-300 eye-care:text-green-800 sm:flex">
+              <a href="#search" className="hover:text-slate-900 dark:hover:text-slate-100 eye-care:hover:text-green-900">
+                汉字查询
+              </a>
+              <a href="#review" className="hover:text-slate-900 dark:hover:text-slate-100 eye-care:hover:text-green-900">
+                智能复习
+              </a>
+              <a href="#vocabulary" className="hover:text-slate-900 dark:hover:text-slate-100 eye-care:hover:text-green-900">
+                生词本
+              </a>
+            </div>
+            <ThemeSwitcher />
+            <DataManager
+              vocabularyBook={book}
+              searchHistory={history}
+              onImport={handleDataImport}
+            />
           </div>
         </div>
       </header>
@@ -63,12 +88,9 @@ export default function HomePage() {
         <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-700 px-4 py-8 text-white shadow-xl sm:px-10 sm:py-10">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-3">
-              <div className="text-sm font-medium uppercase tracking-[0.2em] text-white/70">
-                MVP 版本
-              </div>
               <h1 className="text-2xl font-bold sm:text-4xl">查汉字 · 看笔顺 · 记生词</h1>
               <p className="max-w-2xl text-sm leading-relaxed text-white/80">
-                支持汉字与拼音搜索，内置笔画顺序动画、生词本与搜索历史。全站纯前端实现，可直接静态部署。
+                支持汉字与拼音搜索，内置笔画顺序动画、生词本与搜索历史。
               </p>
               <div className="flex flex-wrap gap-3 text-xs text-white/80">
                 <span className="rounded-full bg-white/10 px-3 py-1">拼音/汉字搜索</span>
@@ -111,13 +133,13 @@ export default function HomePage() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSearch();
               }}
-              placeholder="输入汉字或拼音，如“学”或“xue”"
-              className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-4 text-base outline-none ring-slate-300 transition focus:ring"
+              placeholder='输入汉字或拼音，如"学"或"xue"'
+              className="h-14 flex-1 rounded-xl border-2 border-slate-200 bg-white px-5 text-lg outline-none ring-slate-300 transition placeholder:text-slate-500 focus:border-slate-400 focus:ring sm:h-12 sm:text-base"
             />
             <button
               type="button"
               onClick={() => handleSearch()}
-              className="h-12 rounded-xl bg-slate-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+              className="h-14 rounded-xl bg-slate-900 px-6 text-base font-semibold text-white shadow-sm transition hover:bg-slate-800 active:scale-95 sm:h-12 sm:px-5 sm:text-sm"
             >
               搜索
             </button>
@@ -176,8 +198,7 @@ export default function HomePage() {
 
         <section id="recommend" className="space-y-3">
           <div className="flex items-center justify-between">
-            <div className="text-lg font-semibold text-slate-900">每日推荐（示例数据）</div>
-            <div className="text-xs text-slate-500">后续可接入智能推荐与复习提醒</div>
+            <div className="text-lg font-semibold text-slate-900">每日推荐</div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {recommendedList.map((item) => (
@@ -211,6 +232,10 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </section>
+
+        <section id="review">
+          <ReviewSystem />
         </section>
 
         <section id="vocabulary">

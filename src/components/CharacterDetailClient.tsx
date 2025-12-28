@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import StrokeAnimation from "@/components/StrokeAnimation";
+import TextToSpeech from "@/components/TextToSpeech";
 import { useLocalStorageState } from "@/hooks/useLocalStorage";
+import { useReviewSystem } from "@/components/ReviewSystem";
 import type { CharacterRecord } from "@/lib/characters";
 
 type Props = {
@@ -11,13 +13,24 @@ type Props = {
 
 export default function CharacterDetailClient({ data }: Props) {
   const [book, setBook] = useLocalStorageState<string[]>("vocabulary-book", []);
+  const { records, addToReview, removeFromReview } = useReviewSystem();
+
   const inBook = book.includes(data.char);
+  const inReview = records.some((r) => r.char === data.char);
 
   const toggleBook = () => {
     setBook((prev) => {
       if (prev.includes(data.char)) return prev.filter((c) => c !== data.char);
       return [data.char, ...prev].slice(0, 30);
     });
+  };
+
+  const toggleReview = () => {
+    if (inReview) {
+      removeFromReview(data.char);
+    } else {
+      addToReview(data.char);
+    }
   };
 
   return (
@@ -35,17 +48,33 @@ export default function CharacterDetailClient({ data }: Props) {
             {data.hskLevel && <span className="rounded-full bg-slate-100 px-3 py-1">HSK {data.hskLevel}</span>}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <TextToSpeech
+            text={`${data.char}，${data.pinyin.join("，")}`}
+            buttonText="朗读"
+          />
           <Link
             href="/"
-            className="rounded-full bg-white px-4 py-2 text-sm text-slate-700 ring-1 ring-slate-200 transition hover:ring-slate-300"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
             返回搜索
           </Link>
           <button
             type="button"
+            onClick={toggleReview}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold shadow-sm transition ${
+              inReview
+                ? "border border-cyan-200 bg-cyan-50 text-cyan-700 hover:bg-cyan-100"
+                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            <span>{inReview ? "⏰" : "📅"}</span>
+            <span className="hidden sm:inline">{inReview ? "已加入复习" : "加入复习"}</span>
+          </button>
+          <button
+            type="button"
             onClick={toggleBook}
-            className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-95"
           >
             {inBook ? "移出生词本" : "加入生词本"}
           </button>

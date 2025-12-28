@@ -104,9 +104,32 @@ export const recommendedList = CHARACTERS.slice(0, 6);
 export function searchCharacters(keyword: string): CharacterRecord[] {
   const normalized = keyword.trim().toLowerCase();
   if (!normalized) return [];
+
+  // 移除声调的辅助函数
+  const removeTone = (pinyin: string): string => {
+    return pinyin
+      .replace(/[āáǎà]/g, 'a')
+      .replace(/[ēéěè]/g, 'e')
+      .replace(/[īíǐì]/g, 'i')
+      .replace(/[ōóǒò]/g, 'o')
+      .replace(/[ūúǔù]/g, 'u')
+      .replace(/[ǖǘǚǜü]/g, 'v');
+  };
+
   return CHARACTERS.filter((item) => {
-    const hitsPinyin = item.pinyin.some((p) => p.includes(normalized));
+    // 检查是否匹配汉字本身
     const hitsChar = item.char.includes(keyword.trim());
+
+    // 检查是否匹配拼音（支持带声调和不带声调）
+    const hitsPinyin = item.pinyin.some((p) => {
+      const lowerP = p.toLowerCase();
+      // 完全匹配带声调的拼音
+      if (lowerP.includes(normalized)) return true;
+      // 匹配不带声调的拼音
+      const pinyinWithoutTone = removeTone(lowerP);
+      return pinyinWithoutTone.includes(normalized);
+    });
+
     return hitsChar || hitsPinyin;
   });
 }

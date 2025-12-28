@@ -1,8 +1,21 @@
+@config "../../tailwind.config.js";
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+}
+
+/* 夜间模式 */
+.dark {
+  --background: #0f172a;
+  --foreground: #e2e8f0;
+}
+
+/* 护眼模式 */
+.eye-care {
+  --background: #f0f4e8;
+  --foreground: #2d3e1f;
 }
 
 @theme inline {
@@ -14,13 +27,6 @@
     monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -28,4 +34,59 @@ body {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 夜间模式样式 */
+.dark body {
+  background: linear-gradient(to bottom, #0f172a, #1e293b, #0f172a);
+}
+
+/* 护眼模式样式 */
+.eye-care body {
+  background: linear-gradient(to bottom, #f0f4e8, #fdfdf8, #e8f2dc);
+}
+
+/* Animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
 }
