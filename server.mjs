@@ -17,6 +17,15 @@ function parsePort() {
   return Number.isFinite(port) ? port : 10382;
 }
 
+function parseHost() {
+  const args = process.argv.slice(2);
+  const index = args.findIndex((arg) => arg === "--host" || arg === "--hostname" || arg === "-H");
+  const argHost = index >= 0 ? args[index + 1] : undefined;
+  const envHost = process.env.HOST;
+  const host = (argHost || envHost || "").trim();
+  return host.length > 0 ? host : undefined;
+}
+
 const CONTENT_TYPES = new Map([
   [".html", "text/html; charset=utf-8"],
   [".css", "text/css; charset=utf-8"],
@@ -164,7 +173,20 @@ const server = http.createServer(async (req, res) => {
 });
 
 const port = parsePort();
-server.listen(port, () => {
-  console.log(`静态站点已启动： http://localhost:${port}`);
+const host = parseHost();
+const onListening = () => {
+  const displayHost = !host || host === "0.0.0.0" || host === "::" ? "localhost" : host;
+  console.log(`静态站点已启动： http://${displayHost}:${port}`);
+  if (host) {
+    console.log(`监听地址：${host}${host === "0.0.0.0" || host === "::" ? `（局域网可用 http://<本机IP>:${port} 访问）` : ""}`);
+  } else {
+    console.log(`监听地址：未指定（Node 默认监听全部网卡）`);
+  }
   console.log(`根目录：${ROOT_DIR}`);
-});
+};
+
+if (host) {
+  server.listen(port, host, onListening);
+} else {
+  server.listen(port, onListening);
+}

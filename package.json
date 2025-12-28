@@ -4,9 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 10382",
+    "dev:lan": "next dev --port 10382 --hostname 0.0.0.0",
+    "dev:local": "next dev --port 10382 --hostname 127.0.0.1",
     "build": "node -e \"const fs=require('fs');fs.rmSync('.next',{recursive:true,force:true});fs.rmSync('out',{recursive:true,force:true});\" && next build",
     "start": "node server.mjs",
+    "start:lan": "node server.mjs --host 0.0.0.0",
+    "start:local": "node server.mjs --host 127.0.0.1",
     "preview": "node server.mjs",
+    "preview:lan": "node server.mjs --host 0.0.0.0",
+    "preview:local": "node server.mjs --host 127.0.0.1",
     "lint": "eslint"
   },
   "dependencies": {

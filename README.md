@@ -28,6 +28,14 @@ npm run dev
 打开 `http://localhost:10382` 即可预览。
 开发模式默认端口为 `10382`（可在 `package.json` 的 `dev` 脚本里调整）。
 
+如需在局域网/容器中从其他机器访问，使用：
+
+```bash
+npm run dev:lan
+```
+
+然后用 `http://<本机IP>:10382` 访问（注意防火墙/安全组放行端口）。
+
 ## 构建与静态部署
 生成静态产物（输出目录为 `out/`）：
 
@@ -54,6 +62,7 @@ PORT=10382 npm run start
 说明：
 - `npm run start` 等价于 `node server.mjs`（默认端口 `10382`）
 - 可通过 `PORT` 或 `--port` 覆盖端口，例如：`node server.mjs --port 8080`
+- 如需显式监听 `0.0.0.0`：`node server.mjs --host 0.0.0.0`（或设置环境变量 `HOST=0.0.0.0`）
 
 ## 路由说明
 为保证纯静态部署稳定性，详情页使用 query 参数：
