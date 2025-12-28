@@ -1,0 +1,7 @@
+1:"$Sreact.fragment"
+2:I[22016,["/_next/static/chunks/4dd1e8ee504c597b.js"],""]
+3:"$Sreact.suspense"
+4:I[77337,["/_next/static/chunks/4dd1e8ee504c597b.js"],"default"]
+5:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/247eb132b7f7b574.js"],"OutletBoundary"]
+0:{"buildId":"Py8MIf3CTdDem02lXQ660","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen bg-gradient-to-b from-slate-50 via-white to-cyan-50","children":[["$","header",null,{"className":"border-b border-slate-200 bg-white/80 backdrop-blur","children":["$","div",null,{"className":"mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4","children":[["$","$L2",null,{"href":"/","className":"text-lg font-semibold text-slate-900","children":"汉字学习工具站"}],["$","$L2",null,{"href":"/","className":"text-sm text-slate-600 hover:text-slate-900","children":"返回搜索"}]]}]}],["$","main",null,{"className":"mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8","children":["$","$3",null,{"fallback":["$","div",null,{"className":"rounded-2xl border border-slate-200 bg-white/90 p-6 text-sm text-slate-600 shadow-sm backdrop-blur","children":"正在加载…"}],"children":["$","$L4",null,{}]}]}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/4dd1e8ee504c597b.js","async":true}]],["$","$L5",null,{"children":["$","$3",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"loading":null,"isPartial":false}
+6:null
