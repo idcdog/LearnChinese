@@ -21,7 +21,7 @@ export default function CharacterQueryClient() {
 
   if (!char) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 text-sm text-slate-600 shadow-sm backdrop-blur">
+      <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 text-sm text-slate-600 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-300 eye-care:border-green-300 eye-care:bg-green-50/70 eye-care:text-green-800">
         未指定要查看的汉字，请从首页搜索后进入详情页。
       </div>
     );
@@ -29,13 +29,12 @@ export default function CharacterQueryClient() {
 
   if (!data) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur">
-        <div className="text-base font-semibold text-slate-900">未找到汉字</div>
-        <p className="mt-2 text-sm text-slate-600">当前数据集中未包含“{char}”，请返回搜索页尝试其他汉字。</p>
+      <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-800/70 eye-care:border-green-300 eye-care:bg-green-50/70">
+        <div className="text-base font-semibold text-slate-900 dark:text-slate-100 eye-care:text-green-900">未找到汉字</div>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 eye-care:text-green-800">当前数据集中未包含“{char}”，请返回搜索页尝试其他汉字。</p>
       </div>
     );
   }
 
   return <CharacterDetailClient data={data} />;
 }
-

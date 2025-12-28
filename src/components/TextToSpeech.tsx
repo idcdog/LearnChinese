@@ -52,7 +52,7 @@ export default function TextToSpeech({
       onClick={speak}
       className={
         className ||
-        "flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95"
+        "flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 eye-care:border-green-700 eye-care:bg-green-50 eye-care:text-green-900 eye-care:hover:bg-green-100"
       }
       aria-label={isSpeaking ? "停止朗读" : "朗读"}
     >
