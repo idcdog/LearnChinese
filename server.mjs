@@ -93,13 +93,20 @@ async function trySendFile(req, res, filePath) {
   const contentType = getContentType(resolved);
   const isHtml = contentType.startsWith("text/html");
   const isImmutableAsset = filePath.startsWith("/_next/") || filePath.startsWith("/static/");
+  const isNoCacheAsset = filePath === "/sw.js" || filePath === "/manifest.json" || filePath === "/offline.html";
 
   send(
     res,
     200,
     {
       "Content-Type": contentType,
-      "Cache-Control": isHtml ? "no-cache" : isImmutableAsset ? "public, max-age=31536000, immutable" : "public, max-age=3600",
+      "Cache-Control": isNoCacheAsset
+        ? "no-cache"
+        : isHtml
+          ? "no-cache"
+          : isImmutableAsset
+            ? "public, max-age=31536000, immutable"
+            : "public, max-age=3600",
     },
     body,
   );
