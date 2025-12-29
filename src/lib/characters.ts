@@ -97,13 +97,25 @@ export const CHARACTERS: CharacterRecord[] = [
     hskLevel: 1,
     frequencyRank: 300,
   },
+  {
+    char: "红",
+    pinyin: ["hóng"],
+    radical: "纟",
+    strokeCount: 6,
+    meanings: ["红色", "象征喜庆、热烈"],
+    words: ["红色", "红旗", "红茶"],
+    sentences: ["她穿着一件红衣服。", "过年时家家户户贴红对联。"],
+    hskLevel: 2,
+    frequencyRank: 260,
+  },
 ];
 
 export const recommendedList = CHARACTERS.slice(0, 6);
 
 export function searchCharacters(keyword: string): CharacterRecord[] {
-  const normalized = keyword.trim().toLowerCase();
-  if (!normalized) return [];
+  const raw = keyword.trim();
+  const normalized = raw.toLowerCase();
+  if (!raw) return [];
 
   // 移除声调的辅助函数
   const removeTone = (pinyin: string): string => {
@@ -116,22 +128,55 @@ export function searchCharacters(keyword: string): CharacterRecord[] {
       .replace(/[ǖǘǚǜü]/g, 'v');
   };
 
-  return CHARACTERS.filter((item) => {
-    // 检查是否匹配汉字本身
-    const hitsChar = item.char.includes(keyword.trim());
+  const normalizePinyin = (value: string): string => {
+    return removeTone(value.toLowerCase())
+      .replace(/[0-5]/g, "")
+      .replace(/[^a-zv\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
 
-    // 检查是否匹配拼音（支持带声调和不带声调）
-    const hitsPinyin = item.pinyin.some((p) => {
-      const lowerP = p.toLowerCase();
-      // 完全匹配带声调的拼音
-      if (lowerP.includes(normalized)) return true;
-      // 匹配不带声调的拼音
-      const pinyinWithoutTone = removeTone(lowerP);
-      return pinyinWithoutTone.includes(normalized);
-    });
+  const queryPinyin = normalizePinyin(normalized);
+  const querySyllable = queryPinyin.split(/\s+/)[0] ?? "";
 
-    return hitsChar || hitsPinyin;
+  const matches = CHARACTERS.flatMap((item) => {
+    const hitsChar = item.char.includes(raw);
+
+    let bestPinyinScore: number | null = null;
+    if (querySyllable) {
+      for (const p of item.pinyin) {
+        const pinyinNormalized = normalizePinyin(p);
+        if (!pinyinNormalized) continue;
+
+        let score: number | null = null;
+        if (pinyinNormalized === querySyllable) {
+          score = 0; // 精确匹配：hong == hong
+        } else if (pinyinNormalized.startsWith(querySyllable)) {
+          score = 1; // 前缀匹配：ho -> hong（避免 hong 匹配 zhong 这类“中间命中”）
+        }
+
+        if (score !== null) {
+          bestPinyinScore = bestPinyinScore === null ? score : Math.min(bestPinyinScore, score);
+        }
+      }
+    }
+
+    const hitsPinyin = bestPinyinScore !== null;
+    if (!hitsChar && !hitsPinyin) return [];
+
+    const frequencyRank = item.frequencyRank ?? Number.POSITIVE_INFINITY;
+    const primaryScore = hitsChar ? -1 : (bestPinyinScore ?? 2);
+
+    return [{ item, primaryScore, frequencyRank }];
   });
+
+  matches.sort((a, b) => {
+    if (a.primaryScore !== b.primaryScore) return a.primaryScore - b.primaryScore;
+    if (a.frequencyRank !== b.frequencyRank) return a.frequencyRank - b.frequencyRank;
+    return a.item.char.localeCompare(b.item.char, "zh");
+  });
+
+  return matches.map((m) => m.item);
 }
 
 export function getCharacterByChar(char: string): CharacterRecord | undefined {

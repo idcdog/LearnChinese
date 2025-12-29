@@ -58,6 +58,21 @@ npm run dev:lan
 npm run build
 ```
 
+### 使用 GitHub Actions 自动构建 out
+如果你的部署机器只需要“最终静态文件”，不想每次都手动把 `out/` 推到仓库，可以启用 GitHub Actions：
+- 推送到 `main` 后，自动执行 `npm ci` + `npm run build`
+- 将构建产物发布到仓库的 `out` 分支（分支根目录即静态站点文件）
+
+部署机可改为拉取 `out` 分支：
+
+```bash
+git clone -b out --single-branch <你的仓库地址> site
+```
+
+说明：
+- 工作流文件：`.github/workflows/build-out.yml`
+- 如果你之前已经把 `out/` 提交进 `main`，仅添加 `.gitignore` 不能停止跟踪；可执行一次 `git rm -r --cached out` 后再提交，让 `main` 保持纯源码。
+
 本地预览静态产物：
 
 ```bash
