@@ -134,12 +134,12 @@ export default function HomePage() {
                 if (e.key === "Enter") handleSearch();
               }}
               placeholder='输入汉字或拼音，如"学"或"xue"'
-              className="h-14 flex-1 rounded-xl border-2 border-slate-200 bg-white px-5 text-lg outline-none ring-slate-300 transition placeholder:text-slate-500 focus:border-slate-400 focus:ring sm:h-12 sm:text-base"
+              className="h-16 flex-1 rounded-xl border-2 border-slate-200 bg-white px-5 text-lg text-slate-900 outline-none ring-slate-300 transition placeholder:text-slate-500 focus:border-slate-400 focus:ring dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus:border-slate-500 eye-care:border-green-200 eye-care:bg-green-50 eye-care:text-green-900 eye-care:placeholder:text-green-700/70 eye-care:focus:border-green-300 sm:h-12 sm:text-base"
             />
             <button
               type="button"
               onClick={() => handleSearch()}
-              className="h-14 rounded-xl bg-slate-900 px-6 text-base font-semibold text-white shadow-sm transition hover:bg-slate-800 active:scale-95 sm:h-12 sm:px-5 sm:text-sm"
+              className="h-16 rounded-xl bg-slate-900 px-6 text-base font-semibold text-white shadow-sm transition hover:bg-slate-800 active:scale-95 sm:h-12 sm:px-5 sm:text-sm"
             >
               搜索
             </button>
